@@ -1,0 +1,10 @@
+node_modules
+.venv
+.next
+dist
+build
+.cache
+# .env # Removed by Orchids to allow .env files
+# .env.local # Removed by Orchids to allow .env files
+npm-debug.log*
+.orchids/dev.log

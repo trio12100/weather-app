@@ -1,0 +1,8 @@
+{
+  "startupCommands": [
+    "npm install; npm run dev"
+  ],
+  "projectId": "98484d30-f62a-4aff-86e8-b1342559c761",
+  "templateId": "any",
+  "detectedFramework": "any"
+}
