@@ -57,20 +57,55 @@ let currentLat = null
 let currentLon = null
 let lastData = null
 
+function loadScript(src, timeoutMs = 8000) {
+  return new Promise(resolve => {
+    const existing = document.querySelector(`script[src="${src}"]`)
+    if (existing) {
+      if (window.Chart) return resolve(true)
+      existing.addEventListener('load', () => resolve(!!window.Chart), { once: true })
+      existing.addEventListener('error', () => resolve(false), { once: true })
+      return
+    }
+
+    const script = document.createElement('script')
+    script.src = src
+    script.async = true
+
+    const timer = setTimeout(() => {
+      script.remove()
+      resolve(false)
+    }, timeoutMs)
+
+    script.onload = () => {
+      clearTimeout(timer)
+      resolve(!!window.Chart)
+    }
+
+    script.onerror = () => {
+      clearTimeout(timer)
+      script.remove()
+      resolve(false)
+    }
+
+    document.head.appendChild(script)
+  })
+}
+
 async function ensureChartJs() {
   if (window.Chart) return true
 
-  const script = document.createElement('script')
-  script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js'
-  script.async = true
+  const sources = [
+    '/vendor/chart.umd.min.js',
+    '/node_modules/chart.js/dist/chart.umd.js',
+    'https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js'
+  ]
 
-  const loaded = await new Promise(resolve => {
-    script.onload = () => resolve(true)
-    script.onerror = () => resolve(false)
-    document.head.appendChild(script)
-  })
+  for (const src of sources) {
+    const loaded = await loadScript(src)
+    if (loaded) return true
+  }
 
-  return loaded && !!window.Chart
+  return false
 }
 
 // ── Boot ──────────────────────────────────────────────────
