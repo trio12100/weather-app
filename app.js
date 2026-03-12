@@ -270,7 +270,7 @@ function renderCharts(list) {
 
   const chartDefaults = {
     responsive: true,
-    maintainAspectRatio: true,
+    maintainAspectRatio: false,
     plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
     scales: {
       x: { grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: '#8b949e', font: { size: 11 } } },
