@@ -12,6 +12,11 @@ const app = express()
 app.use(cors())
 app.use(express.static(__dirname))
 
+// Serve Chart.js from local node_modules (avoids CDN CSP issues)
+app.get('/vendor/chart.umd.min.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'node_modules/chart.js/dist/chart.umd.js'))
+})
+
 const OW = process.env.OPENWEATHER
 const CAGE = process.env.OPENCAGE
 
