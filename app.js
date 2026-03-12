@@ -57,8 +57,27 @@ let currentLat = null
 let currentLon = null
 let lastData = null
 
+async function ensureChartJs() {
+  if (window.Chart) return true
+
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js'
+  script.async = true
+
+  const loaded = await new Promise(resolve => {
+    script.onload = () => resolve(true)
+    script.onerror = () => resolve(false)
+    document.head.appendChild(script)
+  })
+
+  return loaded && !!window.Chart
+}
+
 // ── Boot ──────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
+  const chartReady = await ensureChartJs()
+  if (!chartReady) console.warn('Chart.js failed to load. Chart widgets will be unavailable.')
+
   initUnitToggle()
   initSearch()
   initMapTabs()
@@ -322,6 +341,7 @@ function renderCharts(list) {
 }
 
 function buildChart(id, type, labels, data, options, dataset) {
+  if (!window.Chart) return
   if (charts[id]) { charts[id].destroy(); charts[id] = null }
   const canvas = document.getElementById(id)
   if (!canvas) return
